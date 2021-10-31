@@ -39,7 +39,7 @@ jobs:
 
           tags: |
             abcdelf/clash_pro:latest
-            abcdelf/clash_pro:$(date +%s)
+            abcdelf/clash_pro:0.11
       # 微信提醒
 #      - name: WeChat Work notification by markdown
 #        uses: chf007/action-wechat-work@master
