@@ -8,7 +8,7 @@ Current only support [shadowsocks supplier](https://portal.shadowsocks.nz/aff.ph
 You can click **ClashX配置** get the provider config subscribe url.
 ![img.png](doc/img/shadowsocks_provider.png)
 
-## How Use
+## How To Use
 
 ```shell
 docker run -it -d --rm -p 7890:7890 -p 9090:9090 -p 5353:5353 -p 7892:7892 -e provider_url="https://xxx.com/xxx/subscribe" abcdelf/clash_pro
