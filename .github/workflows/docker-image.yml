@@ -1,18 +1,50 @@
-name: Docker Image CI
-
+name: ci
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
-
+    branches:
+      - master
 jobs:
-
-  build:
-
+  build-and-deploy-image:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag clash_pro:$(date +%s)
+      # 拉取master分支
+      - name: Checkout
+        uses: actions/checkout@master
+      # 设置qemu来编译多个平台的镜像
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      # 设置buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+#      # 配置缓存加快编译速度
+#      - name: Cache Docker layers
+#        uses: actions/cache@v2
+#        with:
+#          path: /tmp/.buildx-cache
+#          key: ${{ runner.os }}-buildx-${{ github.sha }}
+#          restore-keys: |
+#            ${{ runner.os }}-buildx-
+      # 登陆dockerhub
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      # 编译并且推送到dockerhub
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          platforms: linux/amd64, linux/arm64
+
+          tags: |
+            abcdelf/clash_pro:latest
+            abcdelf/clash_pro:$(date +%s)
+      # 微信提醒
+#      - name: WeChat Work notification by markdown
+#        uses: chf007/action-wechat-work@master
+#        env:
+#          WECHAT_WORK_BOT_WEBHOOK: ${{secrets.WECHAT_WORK_BOT_WEBHOOK}}
+#        with:
+#          msgtype: markdown
+#          content: miwifi-exporter 编译完成
