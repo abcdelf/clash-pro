@@ -122,8 +122,12 @@ if __name__ == '__main__':
     subprocess.call("mkdir -p /root/.config/clash/", shell=True)
 
     logger.info('download country mmdb file')
-    country_mmdb_file = download_file(country_url)
-    logger.info("exec shell script = mv {} /root/.config/clash/".format(country_mmdb_file))
+    subprocess.call(
+        'wget -O /Country.mmdb https://github.com/Dreamacro/maxmind-geoip/releases/latest/download/Country.mmdb',
+        shell=True)
+    country_mmdb_file = '/Country.mmdb'
+    # country_mmdb_file = download_file(country_url)
+    # logger.info("exec shell script = mv {} /root/.config/clash/".format(country_mmdb_file))
     subprocess.call("mv {} /root/.config/clash/".format(country_mmdb_file), shell=True)
 
     # subprocess.call("mv config.yaml /root/.config/clash/", shell=True)
