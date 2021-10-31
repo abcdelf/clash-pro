@@ -42,12 +42,16 @@ def get_latest_provider_config(provider_url):
     if not provider_url.lower().startswith('http'):
         logger.error('provider url invalid, url={}'.format(provider_url))
         return None
-    res = requests.get(provider_url, verify=False)
-    logger.info('provider request status code={}'.format(res.status_code))
-    if res.status_code > 299:
-        logger.error("status code={}; reason={}".format(res.status_code, res.reason))
-    config_yaml = yaml.safe_load(res.content)
-    return config_yaml
+    try:
+        res = requests.get(provider_url, verify=False)
+        logger.info('provider request status code={}'.format(res.status_code))
+        if res.status_code > 299:
+            logger.error("status code={}; reason={}".format(res.status_code, res.reason))
+        config_yaml = yaml.safe_load(res.content)
+        return config_yaml
+    except Exception as e:
+        logger.exception("get provider config failed; error=", e)
+    return None
 
 
 def update_clash_config(provider_config_tmp=None):
@@ -123,25 +127,27 @@ if __name__ == '__main__':
     time.sleep(check_interval_time)
 
     while True:
+        try:
+            if time.time() - provider_check_time > 36000:
+                # get provider config 10 hour onetime
+                provider_config_old = provider_config
 
-        if time.time() - provider_check_time > 36000:
-            # get provider config 10 hour onetime
-            provider_config_old = provider_config
-
-            logger.info('start to get latest provider config...')
-            provider_check_time = time.time()
-            provider_config = get_latest_provider_config(provider_subscribe_url)
-            if provider_config_old != provider_config:
-                logger.info('provider config has updated...')
-                logger.info('start update clash config file ...')
-                update_clash_config(provider_config)
-                logger.info('kill current clash app...')
-                clash_app.kill()
-                time.sleep(3)
-                logger.info('start up clash app...')
-                clash_app = subprocess.Popen('/clash')
-            else:
-                logger.info('provider config not change...')
+                logger.info('start to get latest provider config...')
+                provider_check_time = time.time()
+                provider_config = get_latest_provider_config(provider_subscribe_url)
+                if provider_config_old != provider_config:
+                    logger.info('provider config has updated...')
+                    logger.info('start update clash config file ...')
+                    update_clash_config(provider_config)
+                    logger.info('kill current clash app...')
+                    clash_app.kill()
+                    time.sleep(3)
+                    logger.info('start up clash app...')
+                    clash_app = subprocess.Popen('/clash')
+                else:
+                    logger.info('provider config not change...')
+        except Exception as e:
+            logger.exception("check provider config failed; error=", e)
 
         time.sleep(check_interval_time)
 
