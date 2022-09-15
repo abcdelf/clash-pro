@@ -1,2 +1,4 @@
 .idea
 __pycache__
+.config/clash/config.yaml
+.config/clash/config.yaml.bak

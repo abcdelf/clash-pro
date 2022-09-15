@@ -47,6 +47,7 @@ def get_latest_provider_config(provider_url):
         logger.info('provider request status code={}'.format(res.status_code))
         if res.status_code > 299:
             logger.error("status code={}; reason={}".format(res.status_code, res.reason))
+            return None
         config_yaml = yaml.safe_load(res.content)
         return config_yaml
     except Exception as e:
@@ -58,9 +59,8 @@ def update_clash_config(provider_config_tmp=None):
     api_secret = os.getenv('api_secret', None)
     # "abc:abc efg:efg"
     proxy_authentication_env = os.environ.get("proxy_authentications", None)
-
     local_config = None
-    if provider_config_tmp is not None:
+    if provider_config_tmp is not None and type(provider_config_tmp) is list:
         local_temp_config_path = './.config/clash/config_template.yaml'
         if os.path.exists(local_temp_config_path):
             logger.info('load local clash config template...')
