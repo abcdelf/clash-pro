@@ -60,7 +60,7 @@ def update_clash_config(provider_config_tmp=None):
     # "abc:abc efg:efg"
     proxy_authentication_env = os.environ.get("proxy_authentications", None)
     local_config = None
-    if provider_config_tmp is not None and type(provider_config_tmp) is list:
+    if provider_config_tmp is not None:
         local_temp_config_path = './.config/clash/config_template.yaml'
         if os.path.exists(local_temp_config_path):
             logger.info('load local clash config template...')
