@@ -52,7 +52,7 @@ def get_latest_clash_package(os_type, cpu_type):
             amd64_download_url = asset_info.get('browser_download_url')
         if str(asset_info.get('name')).__contains__('linux-armv7'):
             armv7_download_url = asset_info.get('browser_download_url')
-        if str(asset_info.get('name')).__contains__('linux-armv8'):
+        if str(asset_info.get('name')).__contains__('linux-armv8') or str(asset_info.get('name')).__contains__('linux-arm64'):
             armv8_download_url = asset_info.get('browser_download_url')
     logger.info(armv7_download_url)
     logger.info(armv8_download_url)
