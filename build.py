@@ -103,6 +103,7 @@ if __name__ == '__main__':
         subprocess.call("cp -r {} {}".format(ui_html_path + '*', '/ui/'), shell=True)
 
     clash_download_url = get_latest_clash_package(os_type, cpu_type)
+    logger.info("clash_download_url={}".format(clash_download_url))
     clash_gzip_file = download_file(clash_download_url)
     exec_res = subprocess.call("gzip -d {}".format(clash_gzip_file), shell=True)
     if exec_res != 0:
